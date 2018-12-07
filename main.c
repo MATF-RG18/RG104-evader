@@ -3,10 +3,11 @@
 #include<GL/glut.h>
 
 static int angle = 0;
-
+static int b = 0;
+static unsigned char taster;
 static void on_display(void);
 static void animacija(int val);
-
+static void ubrzanje(unsigned char taster);
 int main(int argc, char** argv){
 
     glutInit(&argc, argv);
@@ -21,7 +22,7 @@ int main(int argc, char** argv){
     glClearColor(1,1,1, 0);
 
     glutTimerFunc(25, animacija, 0);
-
+    glutKeyboardFunc(ubrzanje);
     glutMainLoop();
 
     return 0;
@@ -34,6 +35,7 @@ static void on_display(void){
     glColor3f(0,0,1);
 
     glPushMatrix();
+
     glTranslatef(0,-0.5,0);
     glRotatef(angle, 1, 0, 0);
 
@@ -47,8 +49,28 @@ static void on_display(void){
 
 static void animacija(int val){
 
-    angle+=2;
+        angle+=b;
+
     glutPostRedisplay();
 
     glutTimerFunc(25, animacija, 0);
+}
+
+static void ubrzanje(unsigned char taster){
+
+    switch(taster){
+        case 'w':
+            b+=2;
+            break;
+        case 32:
+            b+=15;
+            break;
+        case 's':
+            if(b > 15) {
+                b -= 15;
+            }
+            break;
+        case 27:
+            exit(1);
+    }
 }
