@@ -1,6 +1,8 @@
-#include <stdlib.h>
-#include <math.h>
-#include <GL/glut.h>
+#include<stdio.h>
+#include<stdlib.h>
+#include<time.h>
+#include<math.h>
+#include<GL/glut.h>
 
     
    /* Deklaracije callback funkcija. */
@@ -14,6 +16,7 @@ static void dole(int);
 static void ubrzanje(int);
 static void levo(int);
 static void desno(int);
+static void pojavljivanje_objekata(int);
 
 #define TIMER_ID 0
 #define TIMER_INTERVAL 20
@@ -26,43 +29,104 @@ int animation_ongoing_dole = 0;
 int animation_ongoing_ubrzanje = 0;
 int animation_ongoing_levo = 0;
 int animation_ongoing_desno = 0;
-float y_osa = -3.0;
+float y_osa = 0;
 float x_osa = 0;
 float z_osa = 0;
 int sekunde = 0;
 int crvena = 0;
 int plava = 1;
+float x_osaObj = 0;
+float y_osaObj = 0;
+float z_osaObj = 20;
+
+int generisanje_objekta;
+int lower = 1;
+int upper = 3;
+int count = 1;
+
+int lower2 = -3;
+int upper2 = 3;
+int count2 = 1;
+
+int num;
+
+
+void draw_road() {
+    glPushMatrix();
+	    glColor3f(1,0,0);
+	    glRotatef(45, 0, 1, 0);
+	    glScalef(2.0, .05, 25);
+	    glutSolidCube(4);
+    glPopMatrix();
+}
+
+int generate_random(int lower, int upper, int count){ 
+    int i; 
+    for (i = 0; i < count; i++) { 
+       num = (rand() % (upper - lower + 1)) + lower; 
+
+    } 
+    
+    return num;
+
+}
+
+int generate_random2(){ 
+    int i; 
+    for (i = 0; i < count2; i++) { 
+       num = ((rand() % 3) - 1)*3; 
+
+    } 
+
+    return num;
+}
+
+
+void draw_object(){
+
+	glPushMatrix();
+		if(num == 1){
+			glColor3f(1, 0, 0);
+			glTranslatef(x_osaObj, 0, z_osaObj);			
+			glutSolidCube(2);
+					
+		}else if(num == 2){
+			glColor3f(0, 1, 1);
+			glutSolidCube(2);
+			glTranslatef(x_osaObj, 0, z_osaObj);		
+		}else{
+			glColor3f(0, 1, 0);
+			glTranslatef(x_osaObj, 0, z_osaObj);
+			glutSolidCube(2);
+		}
+
+	glPopMatrix();
+}
 
 void draw_ball(double r){
         
-	glPushMatrix();
+	//glPushMatrix();
 
 	glEnable(GL_LIGHT0);
         glEnable(GL_LIGHTING);
 
 	glRotatef(ugao_pocetni, 0, 1, 0);
 	
-	glPushMatrix();		
+	//glPushMatrix();		
 
 		glPushMatrix();
 			glColor3f(crvena, 0, plava);
-			glTranslatef(x_osa, y_osa, z_osa);
+			glTranslatef(x_osa, y_osa+1, z_osa);
 			glRotatef(ugao, 1, 0, 0);		
 			glutWireSphere(1, 30, 30);
 	      	glPopMatrix();
 
-	
-
-	glPopMatrix();
-
-	
+	//glPopMatrix();	
 
         glColorMaterial(GL_FRONT_AND_BACK,GL_AMBIENT_AND_DIFFUSE);
       
-	glPopMatrix();
+	//glPopMatrix();
 
-	
-	
 }
       
 static void on_keyboard(unsigned char key, int x, int y){
@@ -78,7 +142,7 @@ static void on_keyboard(unsigned char key, int x, int y){
 			}
 			break;
 		case 32:
-			if(y_osa == -3.0){
+			if(y_osa == 0){
 				sekunde = 0;
 				if(animation_ongoing_ubrzanje == 0){
 					animation_ongoing_ubrzanje = 1;
@@ -102,7 +166,7 @@ static void on_keyboard(unsigned char key, int x, int y){
 			}
 			break;
 		case 'a':
-			if(y_osa == -3.0){
+			if(y_osa == 0.0){
 				animation_ongoing_desno = 0;
 				if(animation_ongoing_levo == 0){
 					animation_ongoing_levo = 1;
@@ -111,7 +175,7 @@ static void on_keyboard(unsigned char key, int x, int y){
 			}
 			break;
 		case 'd':
-			if(y_osa == -3.0){
+			if(y_osa == 0.0){
 				animation_ongoing_levo = 0;
 				if(animation_ongoing_desno == 0){
 					animation_ongoing_desno = 1;
@@ -135,9 +199,12 @@ static void on_display(void){
 	glLightfv(GL_LIGHT0, GL_POSITION, light_position);
 
 	/* pogled kamere */
-	gluLookAt(-5, -5, -5, 0, 0, 0, 0, 1, 0);
+	gluLookAt(-7, 6, -7, 0, 0, 0, 0, 1, 0);
 
+	draw_road();
 	draw_ball(1);
+	draw_object();
+	
 
 	draw_debug_coosys();
 
@@ -192,7 +259,9 @@ int main(int argc, char **argv){
          glEnable(GL_COLOR_MATERIAL);
 
          glutMainLoop();
-      
+	
+	generate_random2();      
+
          return 0;
 }
       
@@ -202,6 +271,16 @@ static void on_timer(int id){
 
 	if(ugao < 100000)
 		ugao += 2.5;	
+
+	if(z_osaObj > -10){
+		z_osaObj -= 0.25;	
+		if(z_osaObj == -5){
+			z_osaObj = 20;
+			x_osaObj = generate_random2(lower2, upper2, count2);
+			draw_object();		
+		}
+	}
+
 
 	if(animation_ongoing)
 		glutTimerFunc(TIMER_INTERVAL, on_timer, TIMER_ID);
@@ -236,12 +315,14 @@ static void skok(int id_skok){
 	if(id_skok != TIMER_ID)
 		return;
 
-	if(y_osa < 0){
-		y_osa += 0.25;
+	if(y_osa < 2){
+		y_osa += 0.25;		
 	}
+	
 
 	if(animation_ongoing_skok)
 		glutTimerFunc(TIMER_INTERVAL, skok, TIMER_ID);
+
 
 	glutPostRedisplay();
 	
@@ -251,7 +332,7 @@ static void dole(int id_dole){
 	if(id_dole != TIMER_ID)
 		return;
 
-	if(y_osa > -3.0)
+	if(y_osa > 0)
 		y_osa -= 0.25;
 	
 	if(animation_ongoing_dole)
@@ -264,7 +345,7 @@ static void levo(int id_dole){
 	if(id_dole != TIMER_ID)
 		return;
 
-	if(x_osa < 2.5)
+	if(x_osa < 3)
 		x_osa += 0.25;
 
 	if(x_osa == 0)
@@ -280,7 +361,7 @@ static void desno(int id_dole){
 	if(id_dole != TIMER_ID)
 		return;
 
-	if(x_osa > -2.5)
+	if(x_osa > -3)
 		x_osa -= 0.25;
 
 	if(x_osa == 0)
@@ -320,4 +401,4 @@ static void draw_debug_coosys(){
          glVertex3f(0, 0, 0);
          glEnd();
          glEnable(GL_LIGHTING);
-     }
+}
