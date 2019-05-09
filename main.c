@@ -32,23 +32,40 @@ int animation_ongoing_desno = 0;
 float y_osa = 0;
 float x_osa = 0;
 float z_osa = 0;
+
 int sekunde = 0;
+int ind = 0;
 int crvena = 0;
 int plava = 1;
+int zelena = 0;
+int crvenaObj = 0;
+int zelenaObj = 0;
+int plavaObj = 0;
+
 float x_osaObj = 0;
 float y_osaObj = 0;
-float z_osaObj = 20;
+float z_osaObj = 10;
+
+float x_osaObj2 = 0;
+float y_osaObj2 = 3;
+float z_osaObj2 = 10;
+
+float x_osaCollect = 0;
+float y_osaCollect = 1;
+float z_osaCollect = 8;
 
 int generisanje_objekta;
-int lower = 1;
-int upper = 3;
-int count = 1;
+int lower3 = -3;
+int upper3 = 3;
+int count3 = 1;
 
-int lower2 = -3;
-int upper2 = 3;
+int lower2 = -2;
+int upper2 = 2;
 int count2 = 1;
 
 int num;
+
+int skor = 0;
 
 
 void draw_road() {
@@ -60,24 +77,22 @@ void draw_road() {
     glPopMatrix();
 }
 
-int generate_random(int lower, int upper, int count){ 
-    int i; 
-    for (i = 0; i < count; i++) { 
-       num = (rand() % (upper - lower + 1)) + lower; 
-
-    } 
-    
-    return num;
-
+void draw_bar() {
+    glPushMatrix();
+	    glColor3f(1,0,0);
+	    glTranslatef(x_osaObj2, y_osaObj2, z_osaObj2);
+	    glRotatef(90, 0, 1, 0);
+	    glScalef(0.2, 0.2, 2);
+	    glutSolidCube(4);
+    glPopMatrix();
 }
 
-int generate_random2(){ 
+int generate_random3(){ 
     int i; 
-    for (i = 0; i < count2; i++) { 
+    for (i = 0; i < count3; i++) { 
        num = ((rand() % 3) - 1)*3; 
 
     } 
-
     return num;
 }
 
@@ -85,19 +100,34 @@ int generate_random2(){
 void draw_object(){
 
 	glPushMatrix();
-		if(num == 1){
-			glColor3f(1, 0, 0);
-			glTranslatef(x_osaObj, 0, z_osaObj);			
-			glutSolidCube(2);
+		if(num == -3){
+			crvenaObj = 1;
+			zelenaObj = 0;
+			plavaObj = 0;
+			glPushMatrix();
+				glColor3f(crvenaObj, zelenaObj, plavaObj);
+				glTranslatef(x_osaObj, y_osaObj, z_osaObj);			
+				glutSolidCube(2);
+			glPopMatrix();
 					
-		}else if(num == 2){
-			glColor3f(0, 1, 1);
-			glutSolidCube(2);
-			glTranslatef(x_osaObj, 0, z_osaObj);		
+		}else if(num == 0){
+			crvenaObj = 1;
+			zelenaObj = 1;
+			plavaObj = 0;
+			glPushMatrix();
+				glColor3f(crvenaObj, zelenaObj, plavaObj);
+				glTranslatef(x_osaObj, y_osaObj, z_osaObj);		
+				glutSolidCube(2);
+			glPopMatrix();
 		}else{
-			glColor3f(0, 1, 0);
-			glTranslatef(x_osaObj, 0, z_osaObj);
-			glutSolidCube(2);
+			crvenaObj = 0;
+			zelenaObj = 1;
+			plavaObj = 0;
+			glPushMatrix();
+				glColor3f(crvenaObj, zelenaObj, plavaObj);
+				glTranslatef(x_osaObj, y_osaObj, z_osaObj);
+				glutSolidCube(2);
+			glPopMatrix();
 		}
 
 	glPopMatrix();
@@ -118,7 +148,7 @@ void draw_ball(double r){
 			glColor3f(crvena, 0, plava);
 			glTranslatef(x_osa, y_osa+1, z_osa);
 			glRotatef(ugao, 1, 0, 0);		
-			glutWireSphere(1, 30, 30);
+			glutSolidSphere(1, 30, 30);
 	      	glPopMatrix();
 
 	//glPopMatrix();	
@@ -126,6 +156,27 @@ void draw_ball(double r){
         glColorMaterial(GL_FRONT_AND_BACK,GL_AMBIENT_AND_DIFFUSE);
       
 	//glPopMatrix();
+
+}
+
+void draw_collect(double r){
+        
+
+
+	glEnable(GL_LIGHT0);
+        glEnable(GL_LIGHTING);
+
+	glPushMatrix();
+		glColor3f(1, 0, 1);
+		glTranslatef(x_osaCollect, y_osaCollect, z_osaCollect);
+		glRotatef(ugao, 1, 0, 0);		
+		glutSolidSphere(0.25, 30, 30);
+	glPopMatrix();
+
+		
+
+        glColorMaterial(GL_FRONT_AND_BACK,GL_AMBIENT_AND_DIFFUSE);
+      
 
 }
       
@@ -137,6 +188,9 @@ static void on_keyboard(unsigned char key, int x, int y){
 			break;
 		case 13:
 			if(animation_ongoing == 0){
+				z_osaObj = 10;
+				z_osaObj2 = 12;
+				skor = 0;
 				animation_ongoing = 1;
 				glutTimerFunc(TIMER_INTERVAL, on_timer, TIMER_ID);
 			}
@@ -204,9 +258,9 @@ static void on_display(void){
 	draw_road();
 	draw_ball(1);
 	draw_object();
+	draw_bar();
+	draw_collect(0.5);
 	
-
-	draw_debug_coosys();
 
         glutSwapBuffers();
 }
@@ -260,7 +314,6 @@ int main(int argc, char **argv){
 
          glutMainLoop();
 	
-	generate_random2();      
 
          return 0;
 }
@@ -273,12 +326,68 @@ static void on_timer(int id){
 		ugao += 2.5;	
 
 	if(z_osaObj > -10){
-		z_osaObj -= 0.25;	
-		if(z_osaObj == -5){
-			z_osaObj = 20;
-			x_osaObj = generate_random2(lower2, upper2, count2);
+		if(ind == 1){
+			z_osaObj -= 0.55;
+		}else{
+			z_osaObj -= 0.25;
+		}
+		if(z_osaObj == 0){
+			if(x_osaObj == x_osa && y_osaObj == y_osa){
+				if(crvenaObj == 1 && zelenaObj == 0 && plavaObj == 0){
+					animation_ongoing = 0;
+					printf("Izgubili ste, vas rezultat je: %d\n", skor);
+				}else if(ind != 1 && (crvenaObj == 1 && zelenaObj == 1)){
+					animation_ongoing = 0;
+					printf("Izgubili ste, vas rezultat je: %d\n", skor);			
+				}
+			}
+		}		
+
+		if(z_osaObj <= -5){
+			z_osaObj = 10;
+			x_osaObj = generate_random3(lower2, upper2, count2);
+			//y_osaObj = abs(generate_random2(lower3, upper3, count3));
 			draw_object();		
 		}
+		
+	}
+	
+	if(z_osaObj2 > -10){
+
+		z_osaObj2 -= 0.05;
+					
+		if(z_osaObj2 == 0){
+			if(y_osaObj2 == y_osa){
+				animation_ongoing = 0;
+				printf("Izgubili ste, vas rezultat je: %d\n", skor);	
+			}
+		}		
+
+		if(z_osaObj2 <= -5){
+			
+			z_osaObj2 = 12;
+			//y_osaObj = abs(generate_random2(lower3, upper3, count3));
+			draw_object();		
+		}
+		
+	}
+
+	if(z_osaCollect > -10){
+		z_osaCollect -= 0.10;
+		
+		if(z_osaCollect <= 0){
+			if(x_osaCollect == x_osa){
+				skor++;	
+				z_osaCollect = 8;
+				x_osaCollect = generate_random3(lower2, upper2, count2);
+				draw_collect(0.25);		
+			}else{
+				z_osaCollect = 8;
+				x_osaCollect = generate_random3(lower2, upper2, count2);
+				draw_collect(0.25);		
+			}	
+		}	
+		
 	}
 
 
@@ -294,6 +403,7 @@ static void ubrzanje(int id){
 		return;
 		
 	if(sekunde < 50){
+		ind = 1;
 		ugao += 10.5;
 		sekunde++;
 		crvena = 1;
@@ -301,6 +411,7 @@ static void ubrzanje(int id){
 	}else{
 		crvena = 0;
 		plava = 1;
+		ind = 0;
 	}
 
 	if(animation_ongoing_ubrzanje)
@@ -318,7 +429,6 @@ static void skok(int id_skok){
 	if(y_osa < 2){
 		y_osa += 0.25;		
 	}
-	
 
 	if(animation_ongoing_skok)
 		glutTimerFunc(TIMER_INTERVAL, skok, TIMER_ID);
@@ -347,7 +457,6 @@ static void levo(int id_dole){
 
 	if(x_osa < 3)
 		x_osa += 0.25;
-
 	if(x_osa == 0)
 		animation_ongoing_levo = 0;
 	
