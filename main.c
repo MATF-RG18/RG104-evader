@@ -1,3 +1,12 @@
+/* 
+
+RG104-evader
+
+	Projekat iz Racunarske Grafike
+
+		Lazar Ristic 150/2016
+*/
+
 #include<stdio.h>
 #include<stdlib.h>
 #include<time.h>
@@ -5,7 +14,8 @@
 #include<GL/glut.h>
 
     
-   /* Deklaracije callback funkcija. */
+/* Deklaracije callback funkcija. */
+
 static void on_keyboard(unsigned char key, int x, int y);
 static void on_reshape(int width, int height);
 static void on_display(void);
@@ -20,6 +30,8 @@ static void pojavljivanje_objekata(int);
 
 #define TIMER_ID 0
 #define TIMER_INTERVAL 20
+
+/* Promenljive */
 
 float ugao = 0;
 float ugao_pocetni = 45;
@@ -67,6 +79,7 @@ int num;
 
 int skor = 0;
 
+/* Funkcije za crtanje puta, prepreka i loptica */
 
 void draw_road() {
     glPushMatrix();
@@ -76,26 +89,6 @@ void draw_road() {
 	    glutSolidCube(4);
     glPopMatrix();
 }
-
-void draw_bar() {
-    glPushMatrix();
-	    glColor3f(1,0,0);
-	    glTranslatef(x_osaObj2, y_osaObj2, z_osaObj2);
-	    glRotatef(90, 0, 1, 0);
-	    glScalef(0.2, 0.2, 2);
-	    glutSolidCube(4);
-    glPopMatrix();
-}
-
-int generate_random3(){ 
-    int i; 
-    for (i = 0; i < count3; i++) { 
-       num = ((rand() % 3) - 1)*3; 
-
-    } 
-    return num;
-}
-
 
 void draw_object(){
 
@@ -179,6 +172,17 @@ void draw_collect(double r){
       
 
 }
+/* Funkcija za generisanje random broja zbog pojavljivanja objekata */
+int generate_random3(){ 
+    int i; 
+    for (i = 0; i < count3; i++) { 
+       num = ((rand() % 3) - 1)*3; 
+
+    } 
+    return num;
+}
+
+/* Regulisanje komandi */
       
 static void on_keyboard(unsigned char key, int x, int y){
 	
@@ -258,7 +262,6 @@ static void on_display(void){
 	draw_road();
 	draw_ball(1);
 	draw_object();
-	draw_bar();
 	draw_collect(0.5);
 	
 
@@ -325,7 +328,9 @@ static void on_timer(int id){
 	if(ugao < 100000)
 		ugao += 2.5;	
 
-	if(z_osaObj > -10){
+	/* Priblizavanje prepreka */
+
+	if(z_osaObj > -20){
 		if(ind == 1){
 			z_osaObj -= 0.55;
 		}else{
@@ -351,28 +356,10 @@ static void on_timer(int id){
 		}
 		
 	}
+
+	/* Priblizavanje loptica koje se skupljaju */
 	
-	if(z_osaObj2 > -10){
-
-		z_osaObj2 -= 0.05;
-					
-		if(z_osaObj2 == 0){
-			if(y_osaObj2 == y_osa){
-				animation_ongoing = 0;
-				printf("Izgubili ste, vas rezultat je: %d\n", skor);	
-			}
-		}		
-
-		if(z_osaObj2 <= -5){
-			
-			z_osaObj2 = 12;
-			//y_osaObj = abs(generate_random2(lower3, upper3, count3));
-			draw_object();		
-		}
-		
-	}
-
-	if(z_osaCollect > -10){
+	if(z_osaCollect > -20){
 		z_osaCollect -= 0.10;
 		
 		if(z_osaCollect <= 0){
@@ -398,6 +385,8 @@ static void on_timer(int id){
 
 }
 
+/* Funkcija za ubrzanje */
+
 static void ubrzanje(int id){
 	if(id != TIMER_ID)
 		return;
@@ -420,6 +409,8 @@ static void ubrzanje(int id){
 	glutPostRedisplay();
 
 }
+
+/* Funkcija za skok */
  
 static void skok(int id_skok){
 
@@ -438,6 +429,8 @@ static void skok(int id_skok){
 	
 }
 
+/* Funkcija za spustanje loptice dole */
+
 static void dole(int id_dole){
 	if(id_dole != TIMER_ID)
 		return;
@@ -450,6 +443,8 @@ static void dole(int id_dole){
 
 	glutPostRedisplay();
 }
+
+/* Kretanje levo */
 
 static void levo(int id_dole){
 	if(id_dole != TIMER_ID)
@@ -465,6 +460,8 @@ static void levo(int id_dole){
 
 	glutPostRedisplay();
 }
+
+/* Kretanje desno */
 
 static void desno(int id_dole){
 	if(id_dole != TIMER_ID)
