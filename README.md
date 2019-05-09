@@ -1,6 +1,6 @@
 # RG104-evader
 Evader
-Cilj je igre je sto duze izdrzati a ne sudariti se sa objektima koji nadolaze. Ukoliko se naidje na crveni zid, probija se tako sto se ubrza, zuti zid se izbegava, a kroz zeleni moze da se prodje.
+Cilj je igre je sto duze izdrzati a ne sudariti se sa objektima koji nadolaze i usput skupljati ljubicaste loptice. Ukoliko se naidje na crveni zid, izbegava se , zuti zid se izbegava tako sto se ubrza, a kroz zeleni moze da se prodje.
 
 Kontrole:
 Start - ENTER
