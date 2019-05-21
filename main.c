@@ -13,7 +13,7 @@ RG104-evader
 #include<time.h>
 #include<math.h>
 #include<GL/glut.h>
-#include "callbacks.h"
+#include"funkcije.h"
       
       
 int main(int argc, char **argv){
