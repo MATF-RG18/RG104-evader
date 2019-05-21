@@ -9,3 +9,6 @@ Cilj je igre je sto duze izdrzati a ne sudariti se sa objektima koji nadolaze i 
 *Spustanje* - s
 *Levo, desno* - a,d
 *Ubrzanje* - SPACE
+
+### Instalacija:
+Pomoću `make evader` se kreira izvršni fajl koji se pokreće naredbom `./evader`.
